@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.mail.Message;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.pocathon.dec2020.bean.EmailAttributes;
@@ -19,6 +23,9 @@ public class EmailService {
 	
 	@Autowired
 	VaccineService vaccineService;
+	
+	@Autowired
+    private JavaMailSender emailSender;
 	
 	private static final String SUBJECT_PREFIX = "Alert for vaccine: ";
 	private static final String BODY_PREFIX = "Doctor's opinion or possible vaccination needed for the employee: ";
@@ -39,6 +46,15 @@ public class EmailService {
 	
 	//Todo
 	public void sendEmail(List<EmailAttributes> list) {
+		for(EmailAttributes ea : list) {
+			SimpleMailMessage msg = new SimpleMailMessage();
+			msg.setFrom(ADMIN_EMAIL);
+			msg.setTo(ea.getMailTo());
+			msg.setCc(ea.getCc());
+			msg.setSubject(ea.getSubject());
+			msg.setText(ea.getBody());
+			emailSender.send(msg);
+		}
 	}
 
 }
