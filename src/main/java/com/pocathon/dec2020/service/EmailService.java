@@ -27,8 +27,9 @@ public class EmailService {
 	@Autowired
     private JavaMailSender emailSender;
 	
-	private static final String SUBJECT_PREFIX = "Alert for vaccine: ";
-	private static final String BODY_PREFIX = "Doctor's opinion or possible vaccination needed for the employee: ";
+	private static final String SUBJECT_PREFIX = "Employee Health Alert (Immediate) for Vaccine: ";
+	private static final String BODY_PREFIX = "Hi, \nDoctor's opinion or possible vaccination needed for AMT-Nifais's employee: ";
+	private static final String BODY_SUFFIX = "\n \nPlease take necessary actions.";
 	private static final String ADMIN_EMAIL = "pankajbisht27@gmail.com";
 	
 	public void prepareAndSendEmail() {
@@ -39,7 +40,7 @@ public class EmailService {
 			List<Employee> eligibleEmployees = employees.stream().filter(e -> Integer.valueOf(e.getTemperature()) > Integer.valueOf(vaccine.getThresholdTemperature()) && Integer.valueOf(e.getOxygenLevel()) < Integer.valueOf(vaccine.getThresholdOxygenLevel()))
 					.collect(Collectors.toList());
 			String subject = SUBJECT_PREFIX + vaccine.getVaccineName();
-			eligibleEmployees.forEach(ee -> emailList.add(new EmailAttributes(ee.getManagerEmail(), subject, BODY_PREFIX + ee.getEmployeeName(), ee.getEmployeeEmail())));
+			eligibleEmployees.forEach(ee -> emailList.add(new EmailAttributes(ee.getManagerEmail(), subject, BODY_PREFIX + ee.getEmployeeName() + BODY_SUFFIX, ee.getEmployeeEmail())));
 		}
 		sendEmail(emailList);
 	}
